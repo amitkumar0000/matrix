@@ -1,5 +1,7 @@
 package com.ds;
 
+import static java.lang.Math.max;
+
 public class Main {
     static int row = 3;
     static int col = 3;
@@ -10,13 +12,14 @@ public class Main {
 
         createMatrix();
 
-        printMatrixRowWise();
+        printMatrixRowWise(matrix);
 
         printMatrixColWise();
 
         rotateMatrixClockWise();
-    }
 
+        printMaxSumPath();
+    }
 
     private static void createMatrix() {
         matrix = new int[row][col];
@@ -28,7 +31,7 @@ public class Main {
         }
     }
 
-    private static void printMatrixRowWise() {
+    private static void printMatrixRowWise(int matrix[][]) {
         System.out.println("Matrix Row Wise:: ");
         for(int i=0; i<row; i++){
             for(int j =0; j<col; j++){
@@ -90,7 +93,45 @@ public class Main {
                 }
             }
         }
-        printMatrixRowWise();
+        printMatrixRowWise(matrix);
+    }
+
+    private static int printMaxSumPath() {
+        // To find max val in first row
+        int matrix1[][] = new int[row][col];
+        int res = -1;
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                matrix1[i][j] = matrix[i][j];
+            }
+        }
+        for (int i = 0; i < col; i++)
+            res = max(res, matrix1[0][i]);
+
+        for (int i = 1; i < row; i++)
+        {
+            res = -1;
+            for (int j = 0; j < col; j++)
+            {
+                // When all paths are possible
+                if (j > 0 && j < col - 1)
+                    matrix1[i][j] += max(matrix1[i - 1][j], max(matrix1[i - 1][j - 1], matrix1[i - 1][j + 1]));
+
+                    // When diagonal right is not possible
+                else if (j > 0)
+                    matrix1[i][j] += max(matrix1[i - 1][j], matrix1[i - 1][j - 1]);
+
+                    // When diagonal left is not possible
+                else if (j < col - 1)
+                    matrix1[i][j] += max(matrix1[i - 1][j], matrix1[i - 1][j + 1]);
+
+                // Store max path sum
+                res = max(matrix1[i][j], res);
+            }
+        }
+        printMatrixRowWise(matrix1);
+
+        return res;
     }
 
 }
